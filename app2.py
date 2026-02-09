@@ -4,17 +4,11 @@ from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
-import os
 
-# Load environment variables
+# Load environment variables (safe even if .env is missing)
 load_dotenv()
 
-# LangSmith Tracking
-os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_PROJECT"] = "Enhanced Q&A Chatbot"
-
-# Prompt Template
+# ---------------- PROMPT ----------------
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", "You are a helpful assistant. Answer clearly and concisely."),
@@ -23,15 +17,17 @@ prompt = ChatPromptTemplate.from_messages(
 )
 
 def generate_response(question, api_key, engine, temperature, max_tokens):
+    # Set OpenAI key safely
     openai.api_key = api_key
 
     llm = ChatOpenAI(
         model=engine,
         temperature=temperature,
-        max_tokens=max_tokens
+        max_tokens=max_tokens,
+        openai_api_key=api_key,  # explicit & safe
     )
-    output_parser = StrOutputParser()
-    chain = prompt | llm | output_parser
+
+    chain = prompt | llm | StrOutputParser()
     return chain.invoke({"question": question})
 
 # ---------------- UI CONFIG ----------------
@@ -88,14 +84,12 @@ user_prompt = st.chat_input(
 )
 
 if user_prompt:
-    # Show user message
     st.session_state.messages.append(
         {"role": "user", "content": user_prompt}
     )
     with st.chat_message("user"):
         st.markdown(user_prompt)
 
-    # Generate response
     with st.chat_message("assistant"):
         with st.spinner("Thinking... 🤔"):
             try:
@@ -111,7 +105,7 @@ if user_prompt:
                     {"role": "assistant", "content": response}
                 )
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"❌ Error: {e}")
 
 # ---------------- WARNINGS ----------------
 if not api_key:
