@@ -35,10 +35,10 @@ The application is **deployed on Streamlit Cloud** for easy access and sharing.
 
 ## 📁 Project Structure
 .
-├── app.py / app2.py # Main Streamlit application
-├── requirements.txt # Python dependencies
-├── runtime.txt # Python version configuration
-├── README.md # Project documentation
+- ├── app.py / app2.py # Main Streamlit application
+- ├── requirements.txt # Python dependencies
+- ├── runtime.txt # Python version configuration
+- ├── README.md # Project documentation
 
 ---
 ### 1. Clone the repository
