@@ -26,4 +26,5 @@ arxiv
 wikipedia
 validators==0.28.1
 huggingface_hub
+altair==4.2.2
 streamlit
